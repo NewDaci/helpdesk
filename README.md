@@ -37,6 +37,7 @@ pip install -r requirements.txt
 ## 4. Database migrations & admin user
 
 ```bash
+cd helpdesk
 python manage.py migrate
 python manage.py createsuperuser
 ```
