@@ -1,38 +1,127 @@
 # Helpdesk & Ticket Management System
 
-## Tech Stack
+# helpdesk
+
+Public repository: https://github.com/NewDaci/helpdesk
+
+Helpdesk is a simple Django-based ticketing application demonstrating REST APIs, role-based permissions, Celery background tasks, and API documentation via drf-spectacular.
+
+**Tech stack**
 - Django
 - Django REST Framework
-- JWT Authentication
-- Celery + Redis
-- SQLite
-- drf-spectacular
+- drf-spectacular (OpenAPI / Swagger)
+- Celery (+ Redis broker)
+- SQLite (default for development)
 
-## Setup Instructions
+## 1. Clone repository
 
-### 1. Clone Repository
 ```bash
-git clone <repo-url>
+git clone https://github.com/NewDaci/helpdesk.git
 cd helpdesk
 ```
 
-## Features
-- User Authentication & Roles
-- Ticket Management
-- Search & Filtering
-- Escalation System (Celery + Redis)
-- Role-based Permissions
-- Swagger API Documentation
+## 2. Create and activate a virtual environment (zsh)
 
-## Run Project
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+## 3. Install dependencies
+
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
+```
+
+## 4. Database migrations & admin user
+
+```bash
 python manage.py migrate
+python manage.py createsuperuser
+```
+
+## 5. Run development server
+
+```bash
 python manage.py runserver
-celery -A helpdesk worker -l info
-celery -A helpdesk beat -l info
+```
+
+Open `http://127.0.0.1:8000/` in your browser.
+- API docs available at: `http://127.0.0.1:8000/api/docs/`
+- OpenAPI schema: `http://127.0.0.1:8000/api/schema/`
+
+## Celery (background tasks)
+
+This project uses Celery for asynchronous tasks (escalations, scheduled jobs). Use Redis as the broker
+
+### Install Redis (Ubuntu example)
+
+```bash
+sudo apt update
+sudo apt install redis-server
+sudo systemctl enable --now redis
+```
+
+### Start a Celery worker
+
+From the project root:
+
+```bash
+celery -A helpdesk worker --loglevel=info
+```
 
 
-### Bonus Features
-- Ticket comments (threaded updates per ticket)
-- Reporting API for tickets opened, resolved, and escalated in last 7 days
+Notes:
+- The Celery app is defined in `helpdesk/helpdesk/celery.py` — the `-A helpdesk` flag points Celery at the Django project package.
+
+
+---
+project structure:
+
+```
+```zsh
+$ tree  
+.
+├── helpdesk
+│   ├── accounts
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── __init__.py
+│   │   ├── migrations
+│   │   │   ├── 0001_initial.py
+│   │   │   └── __init__.py
+│   │   ├── models.py
+│   │   ├── permissions.py
+│   │   ├── serializers.py
+│   │   ├── signals.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── db.sqlite3
+│   ├── helpdesk
+│   │   ├── asgi.py
+│   │   ├── celery.py
+│   │   ├── __init__.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   ├── manage.py
+│   └── tickets
+│       ├── admin.py
+│       ├── apps.py
+│       ├── __init__.py
+│       ├── migrations
+│       │   ├── 0001_initial.py
+│       │   └── __init__.py
+│       ├── models.py
+│       ├── permissions.py
+│       ├── serializers.py
+│       ├── tasks.py
+│       ├── tests.py
+│       ├── urls.py
+│       └── views.py
+├── README.md
+└── requirements.txt
+```
+7 directories, 34 files
