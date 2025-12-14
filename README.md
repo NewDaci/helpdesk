@@ -63,8 +63,9 @@ sudo apt update
 sudo apt install redis-server
 sudo systemctl enable --now redis
 ```
+- Open a new terminal with the same virtual environment enabled
 
-### Start a Celery worker
+### Start a Celery worker 
 
 From the project root:
 
